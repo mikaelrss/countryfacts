@@ -1,6 +1,6 @@
 import { App } from "@slack/bolt";
 
-import { askForHint, generateQuestion } from "./commands";
+import { askForHint, generateQuestion, hintList } from "./commands";
 import { clearState } from "./state";
 
 const app = new App({
@@ -10,10 +10,14 @@ const app = new App({
   appToken: process.env.SLACK_APP_TOKEN,
 });
 
-app.command("/generate", generateQuestion);
+app.command("/land", generateQuestion);
 app.command("/hint", askForHint);
+app.command("/hintlist", hintList);
 
-app.message(":lollipop:", async ({ message , say}) => {
+app.message(":lollipop:", async ({ message, say }) => {
+  console.log("Cleared state");
+  clearState();
+});app.message("Dan! Ta deg en bolle", async ({ message, say }) => {
   console.log("Cleared state");
   clearState();
 });

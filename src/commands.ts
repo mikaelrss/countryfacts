@@ -4,7 +4,9 @@ import * as utils from "./utils/properties";
 import * as state from "./state";
 import { getCountry } from "./services/countryService";
 import { getProperties } from "./utils/properties";
-import { availableHints } from "./state";
+
+const VALID_HINTS = state.availableHints.join(", ");
+const INVALID_HINT_MESSAGE = `Du har bedt om et ugyldig hint , Tilgjengelige egenskaper du kan spørre om: ${VALID_HINTS} .`;
 
 export type SlackCommandMiddleware = Middleware<SlackCommandMiddlewareArgs>;
 
@@ -14,16 +16,17 @@ export const generateQuestion: SlackCommandMiddleware = async ({
   respond,
   say,
 }) => {
+  await ack();
   const [countryName, properties] = utils.getCountryNameAndProperties(
     command.text
   );
 
   utils.isCountryValid(countryName);
   if (!utils.isPropertiesValid(properties)) {
-    throw Error("Du har bedt om et ugyldig hint");
+    await respond(INVALID_HINT_MESSAGE);
+    return;
   }
 
-  await ack();
   state.setCurrentCountry(countryName);
   state.setCurrentHintsGiven(properties);
 
@@ -39,24 +42,46 @@ export const askForHint: SlackCommandMiddleware = async ({
   respond,
   say,
 }) => {
-  const properties = getProperties(command.text);
   await ack();
-  if (properties[0] === "list") {
-    const hints = availableHints.join(", ");
-    await respond(`Tilgjengelige egenskaper du kan spørre om: ${hints} .`);
-    return;
-  }
+  let properties = getProperties(command.text);
   if (state.currentCountry === undefined) {
     await respond("Ingen aktive spørsmål å gi hint for.");
     return;
   }
 
+  if (properties[0] === "") {
+    /*
+      Randomize the order and pick out exactly 1 hint to give.
+     */
+    properties = state.availableHints
+      .filter((p) => !state.currentHintsGiven.includes(p))
+      .map((value) => ({ value, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ value }) => value)
+      .slice(0, 1);
+
+    if (properties.length === 0) {
+      await respond("Jeg har gitt alle hintene jeg kan gi.");
+    }
+  }
+
   if (!utils.isPropertiesValid(properties)) {
-    throw Error("Du har bedt om et ugyldig hint");
+    await respond(INVALID_HINT_MESSAGE);
+    return;
   }
   const [country] = await getCountry(state.currentCountry);
   const unusedHints = properties.filter(
     (p) => !state.currentHintsGiven.includes(p)
   );
+
+  state.addCurrentHintsGiven(unusedHints);
+
+  console.log(state.currentHintsGiven);
+
   await say(utils.generateHints(country, unusedHints));
+};
+
+export const hintList: SlackCommandMiddleware = async ({ respond, ack }) => {
+  await ack();
+  await respond(`Tilgjengelige egenskaper du kan spørre om: ${VALID_HINTS} .`);
 };

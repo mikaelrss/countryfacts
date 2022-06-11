@@ -17,6 +17,9 @@ export const setCurrentCountry = (name: string) => {
 export const setCurrentHintsGiven = (properties: Properties[]) => {
   currentHintsGiven = properties;
 };
+export const addCurrentHintsGiven = (properties: Properties[]) => {
+  currentHintsGiven = currentHintsGiven.concat(properties);
+};
 
 export const clearState = () => {
   currentHintsGiven = [];
