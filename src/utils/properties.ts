@@ -1,5 +1,6 @@
 import { Country, Properties } from "../domain/Country";
 import { availableHints } from "../state";
+import { format } from "./formatting";
 
 export const isCountryValid = (name: string): boolean => true;
 
@@ -23,14 +24,14 @@ export const getCountryNameAndProperties = (
 const mapPropertyToHint = (country: Country[0], property: Properties) => {
   switch (property) {
     case "area":
-      return "Arealet er " + country.area + "km².";
+      return "Arealet er " + format(country.area) + "km².";
     case "borders":
       if (country.borders) {
         return "Landet grenser til " + country.borders.length + " andre land.";
       }
       return "Landet grenser ikke til noen andre land.";
     case "population":
-      return "Det har " + country.population + " innbyggere.";
+      return "Det har " + format(country.population) + " innbyggere.";
     case "continent":
       if (country.continent) {
         return "Landet ligger i " + country.continent + ".";
