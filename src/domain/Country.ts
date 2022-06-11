@@ -4,19 +4,19 @@ const CurrencySchema = z.object({
   code: z.string().optional(),
   name: z.string(),
   symbol: z.string().optional(),
-})
+});
 
 const LanguageSchema = z.object({
   name: z.string(),
   nativeName: z.string(),
-})
+});
 
 const NameSchema = z.object({
   common: z.string(),
   official: z.string(),
 });
 
-export const CountrySchema = z.object({
+let _ConuntrySchema = z.object({
   name: z.union([z.string(), NameSchema]),
   topLevelDomain: z.string().array().min(1).optional(),
   capital: z.union([z.string(), z.string().array()]).optional(),
@@ -32,8 +32,9 @@ export const CountrySchema = z.object({
   currencies: z.record(z.string(), CurrencySchema).optional(),
   languages: z.record(z.string(), z.string()).optional(),
   flag: z.string(),
-  independent: z.boolean().optional()
-}).array();
+  independent: z.boolean().optional(),
+});
+export const CountrySchema = _ConuntrySchema.array();
 
-
-export type Country = z.infer<typeof CountrySchema>
+export type Country = z.infer<typeof CountrySchema>;
+export type Properties = keyof z.infer<typeof _ConuntrySchema>;

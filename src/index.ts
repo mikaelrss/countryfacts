@@ -1,15 +1,23 @@
-import fastify from "fastify";
-import { countryRoutes } from "./routes/countries";
+import { App } from "@slack/bolt";
 
-const app = fastify({ logger: true });
+import { generateQuestion } from "./commands";
 
-app.register(countryRoutes, { prefix: "countries" });
+const app = new App({
+  token: process.env.SLACK_BOT_TOKEN,
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  socketMode: true,
+  appToken: process.env.SLACK_APP_TOKEN,
+});
+
+
+
+app.command("/generate", generateQuestion);
 
 (async () => {
   try {
-    await app.listen({ port: 3000 });
+    await app.start(3001);
+    console.log("App listening on port 3001");
   } catch (e) {
-    app.log.error(e);
     process.exit(1);
   }
 })();
