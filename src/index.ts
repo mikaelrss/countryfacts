@@ -1,6 +1,7 @@
 import { App } from "@slack/bolt";
 
 import { askForHint, generateQuestion } from "./commands";
+import { clearState } from "./state";
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -11,6 +12,11 @@ const app = new App({
 
 app.command("/generate", generateQuestion);
 app.command("/hint", askForHint);
+
+app.message(":lollipop:", async ({ message , say}) => {
+  console.log("Cleared state");
+  clearState();
+});
 
 (async () => {
   try {

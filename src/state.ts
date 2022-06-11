@@ -1,4 +1,5 @@
 import { Properties } from "./domain/Country";
+import { SlackCommandMiddleware } from "./commands";
 
 export const availableHints: Properties[] = [
   "population",
@@ -15,4 +16,9 @@ export const setCurrentCountry = (name: string) => {
 };
 export const setCurrentHintsGiven = (properties: Properties[]) => {
   currentHintsGiven = properties;
+};
+
+export const clearState = () => {
+  currentHintsGiven = [];
+  currentCountry = undefined;
 };
