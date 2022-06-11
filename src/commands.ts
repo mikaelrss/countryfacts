@@ -4,6 +4,7 @@ import * as utils from "./utils/properties";
 import * as state from "./state";
 import { getCountry } from "./services/countryService";
 import { getProperties } from "./utils/properties";
+import { availableHints } from "./state";
 
 export type SlackCommandMiddleware = Middleware<SlackCommandMiddlewareArgs>;
 
@@ -38,16 +39,21 @@ export const askForHint: SlackCommandMiddleware = async ({
   respond,
   say,
 }) => {
+  const properties = getProperties(command.text);
+  await ack();
+  if (properties[0] === "list") {
+    const hints = availableHints.join(", ");
+    await respond(`Tilgjengelige egenskaper du kan spørre om: ${hints} .`);
+    return;
+  }
   if (state.currentCountry === undefined) {
     await respond("Ingen aktive spørsmål å gi hint for.");
     return;
   }
 
-  const properties = getProperties(command.text);
   if (!utils.isPropertiesValid(properties)) {
     throw Error("Du har bedt om et ugyldig hint");
   }
-  await ack();
   const [country] = await getCountry(state.currentCountry);
   const unusedHints = properties.filter(
     (p) => !state.currentHintsGiven.includes(p)
