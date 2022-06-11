@@ -1,6 +1,6 @@
 import { App } from "@slack/bolt";
 
-import { generateQuestion } from "./commands";
+import { askForHint, generateQuestion } from "./commands";
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -9,9 +9,8 @@ const app = new App({
   appToken: process.env.SLACK_APP_TOKEN,
 });
 
-
-
 app.command("/generate", generateQuestion);
+app.command("/hint", askForHint);
 
 (async () => {
   try {

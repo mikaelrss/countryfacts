@@ -4,10 +4,12 @@ import * as utils from "./utils/properties";
 import { getCountry } from "./services/countryService";
 import {
   currentCountry,
+  currentHintsGiven,
   setCurrentCountry,
   setCurrentHintsGiven,
 } from "./state";
-import { getProperties } from "./utils/properties";
+import { getProperties, isPropertiesValid } from "./utils/properties";
+import { Properties } from "./domain/Country";
 
 type SlackCommandMiddleware = Middleware<SlackCommandMiddlewareArgs>;
 
@@ -22,23 +24,20 @@ export const generateQuestion: SlackCommandMiddleware = async ({
 
   utils.isCountryValid(countryName);
   if (!utils.isPropertiesValid(properties)) {
-    throw Error("En egenskap er ikke gyldig");
+    throw Error("Du har bedt om et ugyldig hint");
   }
 
   await ack();
   setCurrentCountry(countryName);
   setCurrentHintsGiven(properties);
 
-  const country = await getCountry(countryName);
+  const [country] = await getCountry(countryName);
 
-  console.log("Country: ", country);
-  console.log("Properties: ", properties);
-
-  const hints = utils.generateHints(country[0], properties);
+  const hints = utils.generateHints(country, properties);
   await respond(`Hvilket land skal vi frem til? \n ${hints}`);
 };
 
-export const addHint: SlackCommandMiddleware = async ({
+export const askForHint: SlackCommandMiddleware = async ({
   command,
   ack,
   respond,
@@ -48,5 +47,11 @@ export const addHint: SlackCommandMiddleware = async ({
   }
 
   const properties = getProperties(command.text);
-
+  if (!utils.isPropertiesValid(properties)) {
+    throw Error("Du har bedt om et ugyldig hint");
+  }
+  await ack();
+  const [country] = await getCountry(currentCountry);
+  const unusedHints = properties.filter((p) => !currentHintsGiven.includes(p));
+  await respond(utils.generateHints(country, unusedHints));
 };
