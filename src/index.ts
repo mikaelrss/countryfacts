@@ -1,6 +1,9 @@
 import fastify from "fastify";
+import { countryRoutes } from "./routes/countries";
 
 const app = fastify({ logger: true });
+
+app.register(countryRoutes, { prefix: "countries" });
 
 (async () => {
   try {
