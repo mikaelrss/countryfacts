@@ -1,14 +1,31 @@
+import { z } from "zod";
+import { Country, CountrySchema } from "../domain/Country";
+
 const VERSION = "v3.1";
 const BASE_URL = `https://restcountries.com/${VERSION}`;
 
-const getCountry = (name: string) => {
-  const url = `${BASE_URL}/`
-}
-
-const getAllCountryNames = async () => {
-  const url = `${BASE_URL}/all`
-  const response = await fetch(url)
-  if(response.ok) {
-    const resul = await response.json();
+const parseSchema = <Schema extends z.ZodTypeAny>(
+  schema: Schema,
+  data: any
+): z.infer<Schema> => {
+  const parsed = schema.safeParse(data);
+  if (!parsed.success) {
+    console.error(parsed.error);
+    throw Error("Could not parse data from API");
   }
-}
+  return parsed.data;
+};
+
+export const getCountry = async (name: string): Promise<Country> => {
+  const url = `${BASE_URL}/name/${name}`;
+  const response = await fetch(url);
+  const result = await response.json();
+  return parseSchema(CountrySchema, result);
+};
+
+export const getAllCountryNames = async (): Promise<Country> => {
+  const url = `${BASE_URL}/all`;
+  const response = await fetch(url);
+  const result = await response.json();
+  return parseSchema(CountrySchema, result);
+};
