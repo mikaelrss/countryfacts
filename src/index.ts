@@ -1,14 +1,12 @@
-import fastify from 'fastify'
+import fastify from "fastify";
 
-const app = fastify({logger: true});
+const app = fastify({ logger: true });
 
 (async () => {
   try {
-    await app.listen({
-      port: 3000
-    })
+    await app.listen({ port: 3000 });
   } catch (e) {
-    app.log.error(e)
-    process.exit(1)
+    app.log.error(e);
+    process.exit(1);
   }
-})()
+})();
