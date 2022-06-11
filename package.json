@@ -7,11 +7,14 @@
     "dev": "nodemon | pino-pretty"
   },
   "dependencies": {
+    "@fastify/formbody": "^7.0.1",
+    "@slack/bolt": "^3.11.1",
     "fastify": "^4.0.1",
     "zod": "^3.17.3"
   },
   "devDependencies": {
     "@types/node": "^17.0.42",
+    "dotenv": "^16.0.1",
     "nodemon": "^2.0.16",
     "pino-pretty": "^8.0.0",
     "prettier": "^2.6.2",
