@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Country, CountrySchema } from "../domain/Country";
+import fetch from "node-fetch";
 
 const VERSION = "v3.1";
 const BASE_URL = `https://restcountries.com/${VERSION}`;
