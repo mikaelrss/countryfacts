@@ -24,7 +24,7 @@ app.message(":lollipop:", async ({ message, say }) => {
 
 (async () => {
   try {
-    await app.start(3001);
+    await app.start(process.env.PORT || 3001);
     console.log("App listening on port 3001");
   } catch (e) {
     process.exit(1);

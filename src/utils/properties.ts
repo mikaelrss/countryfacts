@@ -1,6 +1,6 @@
 import { Country, Properties } from "../domain/Country";
 import { availableHints } from "../state";
-import { format } from "./formatting";
+import {format, formatPlace} from "./formatting";
 
 export const isCountryValid = (name: string): boolean => true;
 
@@ -34,7 +34,7 @@ const mapPropertyToHint = (country: Country[0], property: Properties) => {
       return "Det har " + format(country.population) + " innbyggere.";
     case "continent":
       if (country.continent) {
-        return "Landet ligger i " + country.continent + ".";
+        return "Landet ligger i " + formatPlace(country.continent) + ".";
       }
       if (country.region) {
         return "Landet ligger i " + country.region + ".";
