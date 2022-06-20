@@ -2,7 +2,6 @@ import { Middleware, SlackCommandMiddlewareArgs } from "@slack/bolt/dist/types";
 
 import * as utils from "./utils/properties";
 import * as state from "./state";
-import { getCountry } from "./services/countryService";
 import { getProperties } from "./utils/properties";
 
 const VALID_HINTS = state.availableHints.join(", ");
@@ -22,7 +21,7 @@ export const generateQuestion: SlackCommandMiddleware = async ({
   );
 
   utils.isCountryValid(countryName);
-  if (!utils.isPropertiesValid(properties)) {
+  if (!utils.isHintsValid(properties)) {
     await respond(INVALID_HINT_MESSAGE);
     return;
   }
@@ -30,9 +29,7 @@ export const generateQuestion: SlackCommandMiddleware = async ({
   state.setCurrentCountry(countryName);
   state.setCurrentHintsGiven(properties);
 
-  const [country] = await getCountry(countryName);
-
-  const hints = utils.generateHints(country, properties);
+  const hints = await utils.generateHints(countryName, properties);
   await say(`Hvilket land skal vi frem til? \n ${hints}`);
 };
 
@@ -65,11 +62,10 @@ export const askForHint: SlackCommandMiddleware = async ({
     }
   }
 
-  if (!utils.isPropertiesValid(properties)) {
+  if (!utils.isHintsValid(properties)) {
     await respond(INVALID_HINT_MESSAGE);
     return;
   }
-  const [country] = await getCountry(state.currentCountry);
   const unusedHints = properties.filter(
     (p) => !state.currentHintsGiven.includes(p)
   );
@@ -78,7 +74,7 @@ export const askForHint: SlackCommandMiddleware = async ({
 
   console.log(state.currentHintsGiven);
 
-  await say(utils.generateHints(country, unusedHints));
+  await say(await utils.generateHints(state.currentCountry, unusedHints));
 };
 
 export const hintList: SlackCommandMiddleware = async ({ respond, ack }) => {

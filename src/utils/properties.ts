@@ -1,27 +1,45 @@
-import { Country, Properties } from "../domain/Country";
+import { Country } from "../domain/Country";
 import { availableHints } from "../state";
-import {format, formatPlace} from "./formatting";
+import { format, formatPlace } from "./formatting";
+import { getCountry } from "../services/countryService";
+import {
+  FactbookCountry,
+  getCountryInformation,
+  getTallestPoint,
+} from "../services/factbook";
+
+export type AvailableHints =
+  | ""
+  | "area"
+  | "borders"
+  | "population"
+  | "continent"
+  | "tallest point";
 
 export const isCountryValid = (name: string): boolean => true;
 
-export const isPropertiesValid = (
-  properties: Properties[] | string[]
-): properties is Properties[] =>
-  !(properties as Properties[]).some((p) => !availableHints.includes(p));
+export const isHintsValid = (
+  properties: AvailableHints[] | string[]
+): properties is AvailableHints[] =>
+  !(properties as AvailableHints[]).some((p) => !availableHints.includes(p));
 
-export const getProperties = (text: string) => {
-  return text.split(",").map((s) => s.trim().toLowerCase());
+export const getProperties = (text: string): AvailableHints[] => {
+  return text.split(",").map((s) => s.trim().toLowerCase()) as AvailableHints[];
 };
 
 export const getCountryNameAndProperties = (
   text: string
-): [string, string[]] => {
+): [string, AvailableHints[]] => {
   const [argument1, argument2] = text.split(";");
   const name = argument1.trim().toLowerCase();
   return [name, getProperties(argument2)];
 };
 
-const mapPropertyToHint = (country: Country[0], property: Properties) => {
+const mapPropertyToHint = async (
+  property: AvailableHints,
+  country: Country[0],
+  factbookCountry: FactbookCountry
+) => {
   switch (property) {
     case "area":
       return "Arealet er " + format(country.area) + "km².";
@@ -40,17 +58,24 @@ const mapPropertyToHint = (country: Country[0], property: Properties) => {
         return "Landet ligger i " + country.region + ".";
       }
       return "Det er uvisst hvor landet ligger.";
+    case "tallest point":
+      return `Landets høyeste punkt er ${format(
+        await getTallestPoint(factbookCountry)
+      )} m.o.h`;
   }
   console.log("Ikke gjenkjent: ", property);
   throw Error("En egenskap er ikke gjenkjent");
 };
 
-export const generateHints = (
-  country: Country[0],
-  properties: Properties[]
+export const generateHints = async (
+  countryName: string,
+  properties: AvailableHints[]
 ) => {
-  return properties.reduce(
-    (acc, next) => acc + "\n" + mapPropertyToHint(country, next),
-    ""
-  );
+  const [country] = await getCountry(countryName);
+  const factbook = await getCountryInformation(countryName);
+  let result = "";
+  for (let p of properties) {
+    result += "\n" + (await mapPropertyToHint(p, country, factbook));
+  }
+  return result;
 };

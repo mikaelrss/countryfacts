@@ -6,11 +6,13 @@
   "scripts": {
     "dev": "nodemon | pino-pretty",
     "build": "tsc -p ./src/tsconfig.json",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "factbook": "ts-node ./src/services/factbook.ts"
   },
   "dependencies": {
     "@slack/bolt": "^3.11.1",
     "@types/node-fetch": "^2.6.1",
+    "csv-parse": "^5.2.0",
     "node-fetch": "^2.6.7",
     "zod": "^3.17.3"
   },
