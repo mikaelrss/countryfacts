@@ -1,12 +1,23 @@
-import { AvailableHints } from "./utils/properties";
+export type AvailableHints =
+  | ""
+  | "area"
+  | "borders"
+  | "population"
+  | "continent"
+  | "mean elevation"
+  | "coast"
+  | "tallest point";
 
 export const availableHints: AvailableHints[] = [
   "population",
   "borders",
   "area",
   "continent",
-  "tallest point"
+  "tallest point",
+  "mean elevation",
+  "coast",
 ];
+
 
 export let currentCountry: string | undefined = undefined;
 export let currentHintsGiven: AvailableHints[];

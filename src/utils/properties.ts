@@ -1,20 +1,14 @@
-import { Country } from "../domain/Country";
-import { availableHints } from "../state";
-import { format, formatPlace } from "./formatting";
-import { getCountry } from "../services/countryService";
+import {Country} from "../domain/Country";
+import {AvailableHints, availableHints} from "../state";
+import {format, formatPlace} from "./formatting";
+import {getCountry} from "../services/countryService";
 import {
   FactbookCountry,
+  getCoastline,
   getCountryInformation,
+  getMeanElevation,
   getTallestPoint,
 } from "../services/factbook";
-
-export type AvailableHints =
-  | ""
-  | "area"
-  | "borders"
-  | "population"
-  | "continent"
-  | "tallest point";
 
 export const isCountryValid = (name: string): boolean => true;
 
@@ -60,8 +54,14 @@ const mapPropertyToHint = async (
       return "Det er uvisst hvor landet ligger.";
     case "tallest point":
       return `Landets høyeste punkt er ${format(
-        await getTallestPoint(factbookCountry)
-      )} m.o.h`;
+        getTallestPoint(factbookCountry)
+      )} m.o.h.`;
+    case "mean elevation":
+      return `Gjennomsnittlig høyde er ${format(
+        getMeanElevation(factbookCountry)
+      )} m.o.h.`;
+    case "coast":
+      return `Landet har ${format(getCoastline(factbookCountry))} km med kystlinje.`
   }
   console.log("Ikke gjenkjent: ", property);
   throw Error("En egenskap er ikke gjenkjent");

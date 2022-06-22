@@ -5,19 +5,18 @@ import fetch from "node-fetch";
 const BASE_URL =
   "https://raw.githubusercontent.com/factbook/factbook.json/master/";
 
+interface Value {
+  text: string;
+}
+
 export interface FactbookCountry {
   Geography: {
     Elevation: {
-      "highest point": {
-        text: string;
-      };
-      "lowest point": {
-        text: string;
-      };
-      "mean elevation": {
-        text: string;
-      };
+      "highest point": Value;
+      "lowest point": Value;
+      "mean elevation": Value;
     };
+    Coastline: Value;
   };
 }
 
@@ -57,12 +56,20 @@ export const getCountryInformation = async (
   return getCountry(countryName);
 };
 
-export const getTallestPoint = async (
-  country: FactbookCountry
-): Promise<number> => {
+export const getTallestPoint = (country: FactbookCountry): number => {
   return stripNonNumericCharacters(
     country.Geography.Elevation["highest point"].text
   );
+};
+
+export const getMeanElevation = (country: FactbookCountry): number => {
+  return stripNonNumericCharacters(
+    country.Geography.Elevation["mean elevation"].text
+  );
+};
+
+export const getCoastline = (country: FactbookCountry): number => {
+  return stripNonNumericCharacters(country.Geography.Coastline.text.split("km")[0]);
 };
 
 (async () => {
