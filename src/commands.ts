@@ -3,6 +3,7 @@ import { Middleware, SlackCommandMiddlewareArgs } from "@slack/bolt/dist/types";
 import * as utils from "./utils/properties";
 import * as state from "./state";
 import { getProperties } from "./utils/properties";
+import { clearState, currentCountry } from "./state";
 
 const VALID_HINTS = state.availableHints.join(", ");
 const INVALID_HINT_MESSAGE = `Du har bedt om et ugyldig hint , Tilgjengelige egenskaper du kan spørre om: ${VALID_HINTS} .`;
@@ -72,12 +73,40 @@ export const askForHint: SlackCommandMiddleware = async ({
 
   state.addCurrentHintsGiven(unusedHints);
 
-  console.log(state.currentHintsGiven);
-
   await say(await utils.generateHints(state.currentCountry, unusedHints));
 };
 
 export const hintList: SlackCommandMiddleware = async ({ respond, ack }) => {
   await ack();
   await respond(`Tilgjengelige egenskaper du kan spørre om: ${VALID_HINTS} .`);
+};
+
+/**
+ * Clears the statue of the current guess and given hints.
+ */
+export const clearStateHandler: Middleware<any> = async () => {
+  clearState();
+};
+
+/**
+ * Checks if the received message contains the correct country.
+ * Says :lollipop: (meaning correct answer) to the channel is the
+ * correct country is guessed.
+ */
+export const checkIfGuessIsCorrect: Middleware<any> = async ({
+  say,
+  message,
+}) => {
+  if (message.text == currentCountry) {
+    await say(`:lollipop:`);
+    clearState();
+    return;
+  }
+  /*
+  This feature is a little annoying at the moment. Could work if we check if
+  the message contains a country.
+   */
+  // if (currentCountry !== undefined) {
+  //   await say("Nei, det er dessverre ikke korrekt.")
+  // }
 };
