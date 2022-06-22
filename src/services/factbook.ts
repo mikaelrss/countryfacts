@@ -71,12 +71,3 @@ export const getMeanElevation = (country: FactbookCountry): number => {
 export const getCoastline = (country: FactbookCountry): number => {
   return stripNonNumericCharacters(country.Geography.Coastline.text.split("km")[0]);
 };
-
-(async () => {
-  console.log(await getCountryInformation("norway"));
-  console.log(getRegionFromCountry("norway"));
-  console.log(getRegionFromCountry("afghanistan"));
-  console.log(getRegionFromCountry("ecuador"));
-  console.log(getRegionFromCountry("canada"));
-  console.log(getRegionFromCountry("tuvalu"));
-})();

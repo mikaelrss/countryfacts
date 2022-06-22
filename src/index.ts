@@ -1,7 +1,7 @@
 import { App } from "@slack/bolt";
 
 import { askForHint, generateQuestion, hintList } from "./commands";
-import { clearState } from "./state";
+import { clearState, currentCountry } from "./state";
 
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
@@ -17,9 +17,27 @@ app.command("/hintlist", hintList);
 app.message(":lollipop:", async ({ message, say }) => {
   console.log("Cleared state");
   clearState();
-});app.message("Dan! Ta deg en bolle", async ({ message, say }) => {
+});
+app.message("Dan! Ta deg en bolle", async ({ message, say }) => {
   console.log("Cleared state");
   clearState();
+});
+
+app.message(async ({ say, message }) => {
+  console.log(message);
+  // @ts-expect-error text exists on message
+  if (message.text == currentCountry) {
+    await say(`:lollipop:`);
+    clearState();
+    return;
+  }
+  /*
+  This feature is a little annoying at the moment. Could work if we check if
+  the message contains a country.
+   */
+  // if (currentCountry !== undefined) {
+  //   await say("Nei, det er dessverre ikke korrekt.")
+  // }
 });
 
 (async () => {

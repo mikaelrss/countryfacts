@@ -1,7 +1,7 @@
-import {Country} from "../domain/Country";
-import {AvailableHints, availableHints} from "../state";
-import {format, formatPlace} from "./formatting";
-import {getCountry} from "../services/countryService";
+import { Country } from "../domain/Country";
+import { AvailableHints, availableHints } from "../state";
+import { format, formatPlace } from "./formatting";
+import { getCountry } from "../services/restCountries";
 import {
   FactbookCountry,
   getCoastline,
@@ -61,7 +61,9 @@ const mapPropertyToHint = async (
         getMeanElevation(factbookCountry)
       )} m.o.h.`;
     case "coast":
-      return `Landet har ${format(getCoastline(factbookCountry))} km med kystlinje.`
+      return `Landet har ${format(
+        getCoastline(factbookCountry)
+      )} km med kystlinje.`;
   }
   console.log("Ikke gjenkjent: ", property);
   throw Error("En egenskap er ikke gjenkjent");
