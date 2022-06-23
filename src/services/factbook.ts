@@ -1,6 +1,7 @@
-import codes from "../data/landCodeMapping.json";
 import regions from "../data/regionMapping.json";
 import fetch from "node-fetch";
+import { LandCode } from '../data/LandCode';
+import { stringToCountryName } from '../domain/CountryName';
 
 const BASE_URL =
   "https://raw.githubusercontent.com/factbook/factbook.json/master/";
@@ -23,11 +24,7 @@ export interface FactbookCountry {
 const stripNonNumericCharacters = (s: string): number =>
   parseInt(s.replace(/\D/g, ""));
 
-const getCodeFromCountry = (country: string): string => {
-  return codes.find(
-    (co) => co.name.trim().toLowerCase() === country.trim().toLowerCase()
-  )?.code as string;
-};
+const getCodeFromCountry = (country: string): string => LandCode[stringToCountryName(country)];
 
 const getRegionFromCountry = (country: string): string => {
   const code = getCodeFromCountry(country);

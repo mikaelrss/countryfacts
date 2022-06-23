@@ -6,7 +6,8 @@ export type AvailableHints =
   | "continent"
   | "mean elevation"
   | "coast"
-  | "tallest point";
+  | "tallest point"
+  | "flag goodness";
 
 export const availableHints: AvailableHints[] = [
   "population",
@@ -16,6 +17,7 @@ export const availableHints: AvailableHints[] = [
   "tallest point",
   "mean elevation",
   "coast",
+  "flag goodness"
 ];
 
 
