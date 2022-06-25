@@ -11,6 +11,7 @@ import {
 } from "../services/factbook";
 import { getFlagGoodnessHint } from "../services/flagGoodness";
 import { getSideOfRoadMessage } from "./propertyFormats";
+import { DENMARK_SIZE } from "../data/constants";
 
 export const isCountryValid = (name: string): boolean => true;
 
@@ -71,6 +72,8 @@ const mapPropertyToHint = async (
       return getFlagGoodnessHint(countryName);
     case "road side":
       return getSideOfRoadMessage(country);
+    case "denmarks":
+      return `Landet er ${(country.area / DENMARK_SIZE).toFixed(2)} Danmarker.`;
   }
   console.log("Ikke gjenkjent: ", property);
   throw Error("En egenskap er ikke gjenkjent");
