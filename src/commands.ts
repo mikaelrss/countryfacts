@@ -82,7 +82,7 @@ export const hintList: SlackCommandMiddleware = async ({ respond, ack }) => {
 };
 
 /**
- * Clears the statue of the current guess and given hints.
+ * Clears the status of the current guess and given hints.
  */
 export const clearStateHandler: Middleware<any> = async () => {
   clearState();

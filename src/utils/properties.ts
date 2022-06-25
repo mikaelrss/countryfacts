@@ -9,7 +9,8 @@ import {
   getMeanElevation,
   getTallestPoint,
 } from "../services/factbook";
-import { getFlagGoodnessHint } from '../services/flagGoodness';
+import { getFlagGoodnessHint } from "../services/flagGoodness";
+import { getSideOfRoadMessage } from "./propertyFormats";
 
 export const isCountryValid = (name: string): boolean => true;
 
@@ -34,7 +35,7 @@ const mapPropertyToHint = async (
   property: AvailableHints,
   country: Country[0],
   factbookCountry: FactbookCountry,
-  countryName: string,
+  countryName: string
 ) => {
   switch (property) {
     case "area":
@@ -67,7 +68,9 @@ const mapPropertyToHint = async (
         getCoastline(factbookCountry)
       )} km med kystlinje.`;
     case "flag goodness":
-      return getFlagGoodnessHint(countryName)
+      return getFlagGoodnessHint(countryName);
+    case "road side":
+      return getSideOfRoadMessage(country);
   }
   console.log("Ikke gjenkjent: ", property);
   throw Error("En egenskap er ikke gjenkjent");
@@ -81,7 +84,8 @@ export const generateHints = async (
   const factbook = await getCountryInformation(countryName);
   let result = "";
   for (let p of properties) {
-    result += "\n" + (await mapPropertyToHint(p, country, factbook, countryName));
+    result +=
+      "\n" + (await mapPropertyToHint(p, country, factbook, countryName));
   }
   return result;
 };

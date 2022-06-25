@@ -33,6 +33,12 @@ let _ConuntrySchema = z.object({
   languages: z.record(z.string(), z.string()).optional(),
   flag: z.string(),
   independent: z.boolean().optional(),
+  car: z
+    .object({
+      signs: z.string().array(),
+      side: z.union([z.literal("right"), z.literal("left")]),
+    })
+    .optional(),
 });
 export const CountrySchema = _ConuntrySchema.array();
 
