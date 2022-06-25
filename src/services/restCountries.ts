@@ -30,3 +30,12 @@ export const getAllCountryNames = async (): Promise<Country> => {
   const result = await response.json();
   return parseSchema(CountrySchema, result);
 };
+
+export const generateFlagMessage = async (countryName: string) => {
+  const [country] = await getCountry(countryName);
+  return {
+    fallback: "Kan ikke vise flagget",
+    text: "Slik ser landets flagg ut: ",
+    image_url: country.flags.png,
+  };
+};

@@ -4,6 +4,7 @@ import * as utils from "./utils/properties";
 import * as state from "./state";
 import { getProperties } from "./utils/properties";
 import { clearState, currentCountry } from "./state";
+import { generateFlagMessage } from "./services/restCountries";
 
 const VALID_HINTS = state.availableHints.join(", ");
 const INVALID_HINT_MESSAGE = `Du har bedt om et ugyldig hint , Tilgjengelige egenskaper du kan spørre om: ${VALID_HINTS} .`;
@@ -31,7 +32,14 @@ export const generateQuestion: SlackCommandMiddleware = async ({
   state.setCurrentHintsGiven(properties);
 
   const hints = await utils.generateHints(countryName, properties);
-  await say(`Hvilket land skal vi frem til? \n ${hints}`);
+  const isFlagOneOfTheHints = properties.includes("flag");
+
+  await say({
+    text: `Hvilket land skal vi frem til? \n ${hints}`,
+    attachments: isFlagOneOfTheHints
+      ? [await generateFlagMessage(countryName)]
+      : [],
+  });
 };
 
 export const askForHint: SlackCommandMiddleware = async ({
@@ -72,8 +80,17 @@ export const askForHint: SlackCommandMiddleware = async ({
   );
 
   state.addCurrentHintsGiven(unusedHints);
-
-  await say(await utils.generateHints(state.currentCountry, unusedHints));
+  const isFlagOneOfTheHints = properties.includes("flag");
+  if (!isFlagOneOfTheHints) {
+    await say({
+      text: await utils.generateHints(state.currentCountry, unusedHints),
+    });
+  } else {
+    await say({
+      text: await utils.generateHints(state.currentCountry, unusedHints),
+      attachments: [await generateFlagMessage(state.currentCountry)],
+    });
+  }
 };
 
 export const hintList: SlackCommandMiddleware = async ({ respond, ack }) => {

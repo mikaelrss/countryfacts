@@ -49,8 +49,8 @@ const mapPropertyToHint = async (
     case "population":
       return "Det har " + format(country.population) + " innbyggere.";
     case "continent":
-      if (country.continent) {
-        return "Landet ligger i " + formatPlace(country.continent) + ".";
+      if (country.region) {
+        return "Landet ligger i " + formatPlace(country.region) + ".";
       }
       if (country.region) {
         return "Landet ligger i " + country.region + ".";
@@ -74,6 +74,8 @@ const mapPropertyToHint = async (
       return getSideOfRoadMessage(country);
     case "denmarks":
       return `Landet er ${(country.area / DENMARK_SIZE).toFixed(2)} Danmarker.`;
+    case "flag":
+      return;
   }
   console.log("Ikke gjenkjent: ", property);
   throw Error("En egenskap er ikke gjenkjent");
@@ -87,8 +89,10 @@ export const generateHints = async (
   const factbook = await getCountryInformation(countryName);
   let result = "";
   for (let p of properties) {
-    result +=
-      "\n" + (await mapPropertyToHint(p, country, factbook, countryName));
+    const hint = await mapPropertyToHint(p, country, factbook, countryName);
+    if (hint !== undefined) {
+      result += "\n" + hint;
+    }
   }
   return result;
 };

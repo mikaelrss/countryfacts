@@ -9,6 +9,7 @@ export type AvailableHints =
   | "tallest point"
   | "road side"
   | "denmarks"
+  | "flag"
   | "flag goodness";
 
 export const availableHints: AvailableHints[] = [
@@ -21,6 +22,7 @@ export const availableHints: AvailableHints[] = [
   "coast",
   "road side",
   "denmarks",
+  "flag",
   "flag goodness"
 ];
 

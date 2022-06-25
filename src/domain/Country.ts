@@ -31,7 +31,7 @@ let _ConuntrySchema = z.object({
   numericCode: z.string().optional(),
   currencies: z.record(z.string(), CurrencySchema).optional(),
   languages: z.record(z.string(), z.string()).optional(),
-  flag: z.string(),
+  flags: z.object({ png: z.string() }),
   independent: z.boolean().optional(),
   car: z
     .object({
