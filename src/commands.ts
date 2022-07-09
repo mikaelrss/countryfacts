@@ -114,6 +114,7 @@ export const checkIfGuessIsCorrect: Middleware<any> = async ({
   say,
   message,
 }) => {
+  if (currentCountry == null) return;
   if (message.text == currentCountry) {
     await say(`:lollipop:`);
     clearState();
