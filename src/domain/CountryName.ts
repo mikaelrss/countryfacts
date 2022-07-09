@@ -198,7 +198,7 @@ export enum CountryName {
 }
 
 export const stringToCountryName = (input: string): CountryName => {
-  let upperCased = input.toUpperCase();
+  let upperCased = input.toUpperCase().replace(/\ /g, "_");
   if (upperCased === "GAMBIA") upperCased = "THE_GAMBIA";
 
   if (isKeyOfCountryName(upperCased)) return CountryName[upperCased];
